@@ -37,6 +37,7 @@ function App() {
   const [provider, setProvider] = useState();
   const [greeter, setGreeter] = useState();
   const [greeting, setGreeting] = useState();
+  const [greetingInputValue, setGreetingInputValue] = useState('');
 
   useEffect(() => {
     const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
@@ -61,9 +62,28 @@ function App() {
     fetchGreeting();
   }, [greeter]);
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const signer = provider.getSigner();
+    await greeter.connect(signer).setGreeting(greetingInputValue);
+    setGreetingInputValue('');
+  };
+
   if (!greeter) return <p>Loading...</p>;
 
-  return <div className='App'>{greeting}</div>;
+  return (
+    <div className='App'>
+      {greeting}
+      <form onSubmit={submitHandler}>
+        <input
+          name='greeting'
+          value={greetingInputValue}
+          onChange={(e) => setGreetingInputValue(e.target.value)}
+        />
+        <input type='submit' value='Submit' />
+      </form>
+    </div>
+  );
 }
 
 export default App;
