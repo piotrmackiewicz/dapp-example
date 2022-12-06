@@ -5,6 +5,19 @@ import './App.css';
 const greeterAddress = '0xdbfAd735332C35c730957229634D103Bb46d5815';
 const greeterABI = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'string',
+        name: 'updatedGreeting',
+        type: 'string',
+      },
+    ],
+    name: 'Change',
+    type: 'event',
+  },
+  {
     inputs: [],
     name: 'getGreeting',
     outputs: [
@@ -60,6 +73,14 @@ function App() {
     };
 
     fetchGreeting();
+  }, [greeter]);
+
+  useEffect(() => {
+    if (!greeter) return;
+
+    greeter.on('Change', (newGreeting) => {
+      setGreeting(newGreeting);
+    });
   }, [greeter]);
 
   const submitHandler = async (e) => {
